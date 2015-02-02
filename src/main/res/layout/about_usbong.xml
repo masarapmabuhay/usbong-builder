@@ -16,14 +16,14 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--Usbong Builder (beta)--\nver: Sept. 10, 2014"/>
+                android:text="--Usbong Builder (beta)--\nver: Feb. 2, 2015"/>
 
         <TextView
                 android:id="@+id/background"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="&#34;Usbong&#34; is a tech company that helps people build their own mobile apps.\n\n Our flagship product, also called, &#34;Usbong&#34;, is an open source platform that helps even non-technical people build their own Android apps for use in data collection, assessment, training, screening, diagnostics, and digital storytelling by putting together components to form a &#34;tree&#34; using a Graphical User Interface (GUI), Google Drive Spreadsheet, or Usbong Builder."/>
+                android:text="&#34;Usbong&#34; helps people build apps. We provide training and workshops on Android Development, Software Engineering, and Social Entrepreneurship. We also offer software development services. Our flagship open source product is also called, &#34;Usbong&#34;."/>
 
         <TextView
                 android:id="@+id/people"
@@ -44,7 +44,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Copyright 2011-2014"/>
+                android:text="Copyright 2011-2015"/>
 
     </LinearLayout>
 </ScrollView>

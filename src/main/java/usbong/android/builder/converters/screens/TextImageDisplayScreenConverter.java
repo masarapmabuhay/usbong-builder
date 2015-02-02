@@ -1,5 +1,6 @@
 package usbong.android.builder.converters.screens;
 
+import android.util.Log;
 import com.google.gson.Gson;
 import usbong.android.builder.enums.ImagePosition;
 import usbong.android.builder.enums.UsbongScreenType;
@@ -26,7 +27,8 @@ public class TextImageDisplayScreenConverter implements ScreenConverter {
     }
 
     private String getScreenType(ImageScreenDetails imageScreenDetails) {
-        if (ImagePosition.ABOVE_TEXT.equals(imageScreenDetails.getImagePosition())) {
+//        if (ImagePosition.ABOVE_TEXT.equals(imageScreenDetails.getImagePosition())) {
+        if (ImagePosition.ABOVE_TEXT.getName().equals(imageScreenDetails.getImagePosition())) {
             if (imageScreenDetails.isHasCaption()) {
                 return UsbongScreenType.CLICKABLE_IMAGE_TEXT_DISPLAY.getName();
             } else {

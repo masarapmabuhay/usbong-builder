@@ -39,13 +39,17 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 3
-        versionName "Sept. 11, 2014"
+        versionCode 5
+        versionName "Feb. 2, 2015"
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
     }
 
     signingConfigs {
         myConfig {
+            storeFile file("D:\\someplace")
+            storePassword "something"
+            keyAlias "something"
+            keyPassword "something"
         }
     }
 
