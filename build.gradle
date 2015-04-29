@@ -6,9 +6,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.+'
-        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+        //classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'com.android.tools.build:gradle:1.1.0'
+        // classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        classpath 'org.robolectric:robolectric-gradle-plugin:1.0.1'
+
     }
 }
 
@@ -19,7 +22,8 @@ allprojects {
 }
 
 apply plugin: 'android'
-apply plugin: 'android-test'
+apply plugin: 'org.robolectric'
+//apply plugin: 'android-test'
 apply plugin: 'crashlytics'
 
 repositories {
@@ -34,7 +38,7 @@ android {
         exclude 'META-INF/NOTICE'
     }
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 14
@@ -48,7 +52,9 @@ android {
 
         }
         release {
-            runProguard false
+        //    runProguard false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 
@@ -58,10 +64,37 @@ android {
         }
     }
 }
+//
+//androidTest {
+//    include '**/*Test.class'
+//    exclude '**/espresso/**/*.class'
+//}
 
-androidTest {
+robolectric {
+    // Configure includes / excludes
     include '**/*Test.class'
     exclude '**/espresso/**/*.class'
+
+    // Configure max heap size of the test JVM
+    maxHeapSize = '2048m'
+
+    // Configure the test JVM arguments - Does not apply to Java 8
+    jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
+
+    // Specify max number of processes (default is 1)
+    maxParallelForks = 4
+
+    // Specify max number of test classes to execute in a test process
+    // before restarting the process (default is unlimited)
+    forkEvery = 150
+
+    // configure whether failing tests should fail the build
+    ignoreFailures true
+
+    // use afterTest to listen to the test execution results
+    afterTest { descriptor, result ->
+        println "Executing test for ${descriptor.name} with result: ${result.resultType}"
+    }
 }
 
 dependencies {
@@ -95,28 +128,31 @@ dependencies {
             'org.hamcrest:hamcrest-core:1.1',
             'org.hamcrest:hamcrest-library:1.1'
 
-    androidTestCompile('junit:junit:4.11') {
-        exclude module: 'hamcrest-core'
-    }
-    androidTestCompile('org.robolectric:robolectric:2.3') {
-        exclude module: 'classworlds'
-        exclude module: 'maven-artifact'
-        exclude module: 'maven-artifact-manager'
-        exclude module: 'maven-error-diagnostics'
-        exclude module: 'maven-model'
-        exclude module: 'maven-plugin-registry'
-        exclude module: 'maven-profile'
-        exclude module: 'maven-project'
-        exclude module: 'maven-settings'
-        exclude module: 'nekohtml'
-        exclude module: 'plexus-container-default'
-        exclude module: 'plexus-interpolation'
-        exclude module: 'plexus-utils'
-        exclude module: 'wagon-file'
-        exclude module: 'wagon-http-lightweight'
-        exclude module: 'wagon-http-shared'
-        exclude module: 'wagon-provider-api'
-    }
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:2.4'
+
+//    androidTestCompile('junit:junit:4.11') {
+//        exclude module: 'hamcrest-core'
+//    }
+//    androidTestCompile('org.robolectric:robolectric:2.3') {
+//        exclude module: 'classworlds'
+//        exclude module: 'maven-artifact'
+//        exclude module: 'maven-artifact-manager'
+//        exclude module: 'maven-error-diagnostics'
+//        exclude module: 'maven-model'
+//        exclude module: 'maven-plugin-registry'
+//        exclude module: 'maven-profile'
+//        exclude module: 'maven-project'
+//        exclude module: 'maven-settings'
+//        exclude module: 'nekohtml'
+//        exclude module: 'plexus-container-default'
+//        exclude module: 'plexus-interpolation'
+//        exclude module: 'plexus-utils'
+//        exclude module: 'wagon-file'
+//        exclude module: 'wagon-http-lightweight'
+//        exclude module: 'wagon-http-shared'
+//        exclude module: 'wagon-provider-api'
+//    }
     androidTestCompile 'com.squareup:fest-android:1.0.+'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }
