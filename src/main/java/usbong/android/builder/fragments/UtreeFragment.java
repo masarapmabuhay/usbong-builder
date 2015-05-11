@@ -3,6 +3,8 @@ package usbong.android.builder.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,14 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.wrapp.floatlabelededittext.FloatLabeledEditText;
+
+import java.io.File;
+
 import rx.Observer;
 import usbong.android.builder.R;
 import usbong.android.builder.controllers.UtreeController;
 import usbong.android.builder.models.Utree;
+import usbong.android.builder.utils.FileUtils;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -28,6 +34,7 @@ public class UtreeFragment extends Fragment {
     public static final String TAG = UtreeFragment.class.getSimpleName();
     public static final String EXTRA_ID = "EXTRA_ID";
     private static final int NEW_TREE = -1;
+    protected Utree currentUtree;
 
     private long id = NEW_TREE;
     private UtreeController controller;
@@ -58,6 +65,7 @@ public class UtreeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
+
         if (arguments != null) {
             id = arguments.getLong(EXTRA_ID, NEW_TREE);
         }
@@ -66,7 +74,6 @@ public class UtreeFragment extends Fragment {
             titleResId = R.string.edit_tree;
         }
         getActivity().setTitle(getString(titleResId));
-
         controller = new UtreeController();
     }
 
@@ -82,6 +89,34 @@ public class UtreeFragment extends Fragment {
 
         ButterKnife.inject(this, view);
         saveButton.setMode(ActionProcessButton.Mode.PROGRESS);
+        if (id != NEW_TREE) {
+            controller.fetchUtree(id, new Observer<Utree>() {
+                @Override
+                public void onCompleted() {
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e(TAG, e.getMessage(), e);
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onNext(Utree utree) {
+                    SpannableString text = new SpannableString(Html.fromHtml(utree.name));
+                    name.setText(text);
+                }
+            });
+        }
+    }
+
+    public void renameUtreeFolder(String path, String oldName, String newName){
+        String sourceXml = path + File.separator + oldName + File.separator + oldName + ".xml";
+        String destinationXml = path + File.separator + oldName + File.separator + newName + ".xml";
+        FileUtils.rename(sourceXml, destinationXml);
+        String sourceFolder =  path + File.separator + oldName;
+        String destinationFolder = path + File.separator + newName;
+        FileUtils.rename(sourceFolder, destinationFolder);
     }
 
     @OnClick(android.R.id.button1)
@@ -102,11 +137,16 @@ public class UtreeFragment extends Fragment {
             }
 
             @Override
-            public void onNext(Utree utree) {
+            public void onNext(final Utree utree) {
+                final String oldUtreeName = utree.name;
                 utree.name = name.getText().toString().trim();
                 controller.save(utree, new Observer<Utree>() {
                     @Override
                     public void onCompleted() {
+                        if(id != NEW_TREE){
+                            String outputFolderLocation = getActivity().getFilesDir() + File.separator + "trees";
+                            renameUtreeFolder(outputFolderLocation, oldUtreeName, utree.name);
+                        }
                         //TODO: implement better transition?
                         saveButton.setProgress(100);
                         Toast.makeText(getActivity(), getString(R.string.utree_saved), Toast.LENGTH_SHORT).show();
@@ -114,15 +154,15 @@ public class UtreeFragment extends Fragment {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable e){
                         Log.e(TAG, e.getMessage(), e);
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         saveButton.setProgress(-1);
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
                     }
 
                     @Override
                     public void onNext(Utree o) {
-
                     }
                 });
             }

@@ -187,4 +187,12 @@ public class FileUtils {
             }
         }
     }
+
+    public static void rename(String sourceLocation, String destinationLocation) {
+        File oldFile = new File(sourceLocation);
+        File newFile = new File(destinationLocation);
+        if(oldFile.exists()){
+            oldFile.renameTo(newFile);
+        }
+    }
 }

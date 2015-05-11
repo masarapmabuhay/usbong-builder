@@ -22,6 +22,7 @@ import usbong.android.builder.adapters.UtreeAdapter;
 import usbong.android.builder.controllers.UtreeListController;
 import usbong.android.builder.events.OnNeedRefreshTrees;
 import usbong.android.builder.exceptions.NoStartingScreenException;
+import usbong.android.builder.fragments.dialogs.DeleteConfirmationDialogFragment;
 import usbong.android.builder.models.Utree;
 import usbong.android.builder.utils.IntentUtils;
 import usbong.android.builder.utils.StringUtils;
@@ -83,6 +84,14 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
                 case R.id.action_export:
                     mode.finish();
                     exportTree();
+                    return true;
+                case R.id.action_rename:
+                    mode.finish();
+                    renameTree();
+                    return true;
+                case R.id.action_delete:
+                    mode.finish();
+                    showDeleteConfirmationDialog();
                     return true;
             }
             return false;
@@ -161,6 +170,13 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
         super.onResume();
 
         controller.fetchUtrees(this);
+    }
+
+    private void renameTree() {
+        Intent intent = new Intent(getActivity(), UtreeActivity.class);
+        intent.putExtra(UtreeFragment.EXTRA_ID, selectedUtree.getId().longValue());
+        startActivity(intent);
+        selectedUtree = null;
     }
 
     public void editUtree() {
@@ -300,6 +316,50 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
     private void exportTree() {
         Intent intent = IntentUtils.getSelectFolderIntent(getActivity());
         startActivityForResult(intent, IntentUtils.CHOOSE_FOLDER_REQUEST_CODE);
+    }
+
+
+    private void showDeleteConfirmationDialog() {
+        DeleteConfirmationDialogFragment dialog = DeleteConfirmationDialogFragment.newInstance();
+        dialog.setCallback(new DeleteConfirmationDialogFragment.Callback() {
+            @Override
+            public void onYes() {
+                deleteTree();
+            }
+
+            @Override
+            public void onNo() {
+
+            }
+        });
+        dialog.show(getFragmentManager(), "DIALOG");
+    }
+
+
+
+    private void deleteTree() {
+
+        String outputFolderLocation = getActivity().getFilesDir() + File.separator + "trees";
+        controller.deleteUtree(selectedUtree, outputFolderLocation, new Observer<Object>() {
+
+            @Override
+            public void onCompleted() {
+                selectedUtree = null;
+                controller.fetchUtrees(UtreeListFragment.this);
+                Toast.makeText(getActivity(), "UTree deleted.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(TAG, e.getMessage(), e);
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNext(Object o) {
+
+            }
+        });
     }
 
     public void onEvent(final OnNeedRefreshTrees event) {

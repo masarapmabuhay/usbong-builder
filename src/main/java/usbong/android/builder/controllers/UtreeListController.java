@@ -1,6 +1,9 @@
 package usbong.android.builder.controllers;
 
+import android.util.Log;
+
 import com.activeandroid.Model;
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import rx.Observable;
 import rx.Observer;
@@ -10,6 +13,7 @@ import rx.schedulers.Schedulers;
 import usbong.android.builder.converters.UtreeConverter;
 import usbong.android.builder.exceptions.NoStartingScreenException;
 import usbong.android.builder.models.Screen;
+import usbong.android.builder.models.ScreenRelation;
 import usbong.android.builder.models.Utree;
 import usbong.android.builder.parsers.UtreeParser;
 import usbong.android.builder.utils.FileUtils;
@@ -42,6 +46,42 @@ public class UtreeListController implements Controller {
         }).subscribeOn(Schedulers.io());
     }
 
+    /**
+     * Added by Cere Blanco 5/2015
+     * @param utree
+     * @param observer
+     */
+    public void deleteUtree(final Utree utree, final String folderLocation, Observer<Object> observer) {
+
+        Observable.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+                List<Screen> uTreeScreens = Screen.getScreens(utree.getId());
+
+                for( Screen screen: uTreeScreens) {
+                    new Delete().from(ScreenRelation.class)
+                            .where("parent = ? OR child = ?", screen.getId())
+                            .execute();
+                    new Delete().from(Screen.class)
+                            .where(Screen._ID + " = ?", screen.getId())
+                            .execute();
+                }
+
+                String treeFolder = folderLocation + File.separator + utree.name;
+                FileUtils.delete(treeFolder);
+
+                new Delete().from(Utree.class)
+                        .where(Utree._ID + " = ?", utree.getId())
+                        .execute();
+
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
     public void importTree(final String fileLocation, final String outputFolderLocation, Observer<String> observer) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -49,11 +89,12 @@ public class UtreeListController implements Controller {
                 if (fileLocation.endsWith(XML_FILE_EXTENSION)) {
                     String treeName = fileLocation.substring(fileLocation.lastIndexOf("/") + 1, fileLocation.lastIndexOf(XML_FILE_EXTENSION));
                     parseTreeDetails(fileLocation, outputFolderLocation + File.separator + treeName);
+
                     subscriber.onNext(fileLocation);
                     subscriber.onCompleted();
                 } else if (fileLocation.endsWith(UTREE_FILE_EXTENSION)) {
                     String treeName = fileLocation.substring(fileLocation.lastIndexOf("/") + 1, fileLocation.lastIndexOf(UTREE_FILE_EXTENSION));
-                    FileUtils.unzip(fileLocation, outputFolderLocation + File.separator + treeName);
+                    FileUtils.unzip(fileLocation, outputFolderLocation);
                     String xmlFilePath = outputFolderLocation + File.separator + treeName + File.separator + treeName + XML_FILE_EXTENSION;
                     parseTreeDetails(xmlFilePath, outputFolderLocation + File.separator + treeName);
                     subscriber.onNext(xmlFilePath);
@@ -100,4 +141,5 @@ public class UtreeListController implements Controller {
                 .subscribe(observer);
 
     }
+
 }

@@ -1,11 +1,15 @@
 package usbong.android.builder.controllers;
 
+import android.util.Log;
+
 import com.activeandroid.query.Select;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import usbong.android.builder.exceptions.FormInputException;
+import usbong.android.builder.exceptions.NoStartingScreenException;
 import usbong.android.builder.models.Utree;
 
 /**
@@ -33,7 +37,7 @@ public class UtreeController implements Controller {
                     utree = new Utree();
                 } else {
                     utree = new Select().from(Utree.class)
-                            .where("id = ?", id)
+                            .where(Utree._ID + " = ?", id)
                             .executeSingle();
                 }
                 return utree;
@@ -45,7 +49,12 @@ public class UtreeController implements Controller {
         Observable.create(new Observable.OnSubscribe<Utree>() {
             @Override
             public void call(Subscriber<? super Utree> subscriber) {
-                utree.save();
+                if(utree.name.equalsIgnoreCase("")){
+                    subscriber.onError(new FormInputException("Please provide a valid .utree name."));
+                }else {
+                    utree.save();
+                }
+                subscriber.onNext(utree);
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
