@@ -8,6 +8,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import usbong.android.builder.models.Screen;
+import usbong.android.builder.models.ScreenRelation;
 
 /**
  * Created by Rocky Camacho on 6/26/2014.
@@ -15,6 +16,8 @@ import usbong.android.builder.models.Screen;
 public class ScreenController implements Controller {
 
     private static final String TAG = ScreenController.class.getSimpleName();
+    public static final String EXTRA_RELATION_CONDITION = "EXTRA_RELATION_CONDITION";
+
 
     public void fetchScreen(long id, Observer<Screen> observer) {
         getScreen(id).observeOn(AndroidSchedulers.mainThread())
@@ -61,6 +64,50 @@ public class ScreenController implements Controller {
                     screen.save();
                 }
                 subscriber.onNext(screen);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public void addRelation(final Screen parentScreen, final Screen childScreen, final String condition,Observer<ScreenRelation> observer) {
+        Observable.create(new Observable.OnSubscribe<ScreenRelation>() {
+            @Override
+            public void call(Subscriber<? super ScreenRelation> subscriber) {
+                ScreenRelation screenRelation = new ScreenRelation();
+                screenRelation.parent = parentScreen;
+                screenRelation.child = childScreen;
+                screenRelation.condition = condition;
+                screenRelation.save();
+                subscriber.onNext(screenRelation);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public void addOrUpdateRelation(final Screen parentScreen, final Screen childScreen, final String condition, Observer<ScreenRelation> observer) {
+        Observable.create(new Observable.OnSubscribe<ScreenRelation>() {
+            @Override
+            public void call(Subscriber<? super ScreenRelation> subscriber) {
+                ScreenRelation existingRelationWithSameCondition = new Select().from(ScreenRelation.class)
+                        .where("parent = ? and condition = ?", parentScreen.getId(), condition)
+                        .executeSingle();
+                if(existingRelationWithSameCondition != null) {
+                    existingRelationWithSameCondition.child = childScreen;
+                    existingRelationWithSameCondition.save();
+                    subscriber.onNext(existingRelationWithSameCondition);
+                }
+                else {
+                    ScreenRelation screenRelation = new ScreenRelation();
+                    screenRelation.parent = parentScreen;
+                    screenRelation.child = childScreen;
+                    screenRelation.condition = condition;
+                    screenRelation.save();
+                    subscriber.onNext(screenRelation);
+                }
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())

@@ -35,6 +35,9 @@
     <string name="select_an_image">Select an image</string>
     <string name="please_install_file_manager">Please install a file manager.</string>
     <string name="select_a_video">Select a video</string>
+    <string name="screen_parent_label">Screen parent : </string>
+    <string name="screen_parent_title"> NONE </string>
+    <string name="tree_parent">NONE</string>
 
     <array name="decisions">
         <item>Yes</item>
@@ -44,5 +47,7 @@
         <item>Agree</item>
         <item>Disagree</item>
     </array>
+    <string name="title_activity_screen_child">ScreenChildActivity</string>
+    <string name="title_activity_create_decision">CreateDecisionActivity</string>
 
 </resources>

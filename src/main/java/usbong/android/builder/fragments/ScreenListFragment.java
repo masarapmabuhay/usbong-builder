@@ -15,18 +15,28 @@ import butterknife.OnItemClick;
 import com.activeandroid.query.Select;
 import rx.Observer;
 import usbong.android.builder.R;
+import usbong.android.builder.UsbongBuilder;
+import usbong.android.builder.activities.CreateDecisionActivity;
 import usbong.android.builder.activities.ScreenActivity;
 import usbong.android.builder.activities.ScreenDetailActivity;
+import usbong.android.builder.activities.SelectDecisionActivity;
+import usbong.android.builder.activities.SelectScreenActivity;
 import usbong.android.builder.adapters.ScreenAdapter;
 import usbong.android.builder.controllers.ScreenListController;
 import usbong.android.builder.controllers.UtreeListController;
+import usbong.android.builder.enums.UsbongBuilderScreenType;
 import usbong.android.builder.fragments.dialogs.DeleteConfirmationDialogFragment;
+import usbong.android.builder.fragments.screens.DecisionScreenFragment;
 import usbong.android.builder.models.Screen;
 import usbong.android.builder.models.Utree;
+import usbong.android.builder.models.details.ListScreenDetails;
+import usbong.android.builder.models.details.TextInputScreenDetails;
 import usbong.android.builder.utils.IntentUtils;
+import usbong.android.builder.utils.JsonUtils;
 import usbong.android.builder.utils.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +51,9 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
 
     private static final String TAG = ScreenListFragment.class.getSimpleName();
     public static final String EXTRA_TREE_ID = "EXTRA_TREE_ID";
-    public static final String EXTRA_SCREEN_ID = "EXTRA_SCREEN_ID";
+    public final String RELATION_CONDITION_DEFAULT = "DEFAULT";
+
+    public static final int ADD_DECISION_CHILD_REQUEST_CODE = 302;
 
     /**
      * The fragment's ListView/GridView.
@@ -76,6 +88,10 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
                 case R.id.action_edit:
                     mode.finish();
                     editScreen();
+                    return true;
+                case R.id.action_add_child:
+                    mode.finish();
+                    addChildScreen();
                     return true;
                 case R.id.action_delete:
                     mode.finish();
@@ -133,6 +149,79 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
 
             }
         });
+    }
+
+    public void createDefaultConditionActivity(){
+        Intent intent = new Intent(getActivity(), ScreenActivity.class);
+        intent.putExtra(ScreenFragment.EXTRA_TREE_ID, treeId);
+        intent.putExtra(ScreenFragment.EXTRA_PARENT_ID, selectedScreen.getId().longValue());
+        intent.putExtra(ScreenFragment.EXTRA_RELATION_CONDITION, RELATION_CONDITION_DEFAULT);
+        startActivity(intent);
+    }
+
+    public void createDecisionConditionActivity(){
+        Intent data = new Intent(getActivity(), CreateDecisionActivity.class);
+        data.putExtra(CreateDecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
+        data.putExtra(CreateDecisionActivity.EXTRA_TREE_ID, treeId);
+        startActivity(data);
+    }
+
+    public void createTextInputConditionActivity(){
+        TextInputScreenDetails textInputScreenDetails = JsonUtils.fromJson(selectedScreen.details, TextInputScreenDetails.class);
+        if(textInputScreenDetails.isHasAnswer()) {
+            Intent data = new Intent(getActivity(), SelectDecisionActivity.class);
+            ArrayList<String> decisions = new ArrayList<String>();
+            decisions.add("Correct");
+            decisions.add("Incorrect");
+            data.putStringArrayListExtra(CreateDecisionActivity.EXTRA_POSSIBLE_DECISIONS, decisions);
+            data.putExtra(CreateDecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
+            data.putExtra(CreateDecisionActivity.EXTRA_TREE_ID, treeId);
+            data.putExtra(CreateDecisionActivity.EXTRA_CONDITION_PREFIX, "ANSWER");
+            startActivity(data);
+        }
+        else {
+              createDecisionConditionActivity();
+//            Intent data = new Intent(getActivity(), CreateDecisionActivity.class);
+//            data.putExtra(CreateDecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
+//            data.putExtra(CreateDecisionActivity.EXTRA_TREE_ID, treeId);
+//            startActivity(data);
+        }
+    }
+
+    public void createListFragmentConditionActivity(){
+        TextInputScreenDetails textInputScreenDetails = JsonUtils.fromJson(selectedScreen.details, TextInputScreenDetails.class);
+        ListScreenDetails selectedListType = JsonUtils.fromJson(selectedScreen.details, ListScreenDetails.class);
+        if((ListScreenDetails.ListType.SINGLE_ANSWER.equals(selectedListType.getType()) && selectedListType.isHasAnswer())
+                || ListScreenDetails.ListType.MULTIPLE_ANSWERS.equals(selectedListType)) {
+            Intent data = new Intent(getActivity(), SelectDecisionActivity.class);
+            ArrayList<String> decisions = new ArrayList<String>();
+            decisions.add("Correct");
+            decisions.add("Incorrect");
+            data.putStringArrayListExtra(CreateDecisionActivity.EXTRA_POSSIBLE_DECISIONS, decisions);
+            data.putExtra(CreateDecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId());
+            data.putExtra(CreateDecisionActivity.EXTRA_TREE_ID, treeId);
+            data.putExtra(CreateDecisionActivity.EXTRA_CONDITION_PREFIX, "ANSWER");
+            startActivity(data);
+        }
+        else {
+              createDecisionConditionActivity();
+//            Intent data = new Intent(getActivity(), CreateDecisionActivity.class);
+//            data.putExtra(CreateDecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
+//            data.putExtra(CreateDecisionActivity.EXTRA_TREE_ID, treeId);
+//            startActivity(data);
+        }
+    }
+
+    private void addChildScreen(){
+        if(UsbongBuilderScreenType.DECISION.getName().equals(selectedScreen.screenType)){
+            createDecisionConditionActivity();
+        }else if(UsbongBuilderScreenType.LIST.getName().equals(selectedScreen.screenType)){
+            createDefaultConditionActivity();
+        }else if(UsbongBuilderScreenType.TEXT_INPUT.getName().equals(selectedScreen.screenType)){
+            createTextInputConditionActivity();
+        }else{
+            createDefaultConditionActivity();
+        }
     }
 
     /**
