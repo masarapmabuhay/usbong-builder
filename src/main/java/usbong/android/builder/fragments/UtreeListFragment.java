@@ -254,6 +254,10 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
 
                 @Override
                 public void onCompleted() {
+                    //added by Mike, 2 June 2015
+//                    selectedUtree = null;
+                    controller.fetchUtrees(UtreeListFragment.this);
+                    Toast.makeText(getActivity(), ".utree imported.", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -337,12 +341,12 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
     		private void deleteTree() {    	
         		String outputFolderLocation = getActivity().getFilesDir() + File.separator + "trees";
     	     	controller.deleteUtree(selectedUtree, outputFolderLocation, new Observer<Object>() {
-    	
+
 	    	    @Override
 	    	    public void onCompleted() {
 	    			selectedUtree = null;
 	    			controller.fetchUtrees(UtreeListFragment.this);
-	    	    	Toast.makeText(getActivity(), "UTree deleted.", Toast.LENGTH_SHORT).show();
+	    	    	Toast.makeText(getActivity(), ".utree deleted.", Toast.LENGTH_SHORT).show();
 	    		}
 	    	
 	    		@Override

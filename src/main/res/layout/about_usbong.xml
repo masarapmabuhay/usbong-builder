@@ -16,7 +16,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--Usbong Builder (beta)--\nver: Feb. 2, 2015"/>
+                android:text="--Usbong Builder (beta)--\nver: June. 2, 2015"/>
 
         <TextView
                 android:id="@+id/background"
@@ -30,7 +30,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Usbong Social Systems, Inc.\n--Core Developers--\nMichael B. Syson (Founder)\nDiane Jayne C. Gonzales (Community)\nRocky Camacho (Builder)\n"/>
+                android:text="Usbong Social Systems, Inc.\n--Core Developers--\nMichael B. Syson\nCere Blanco\n\nAcknowledgment:\nRocky Camacho\nJaime Bernardo Lopez\n"/>
 
         <TextView
                 android:id="@+id/contact"
