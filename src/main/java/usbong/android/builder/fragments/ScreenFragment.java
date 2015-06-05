@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -18,7 +17,6 @@ import butterknife.OnClick;
 import com.activeandroid.query.Select;
 import com.wrapp.floatlabelededittext.FloatLabeledEditText;
 
-import de.greenrobot.event.EventBus;
 import rx.Observer;
 import usbong.android.builder.R;
 import usbong.android.builder.activities.ScreenDetailActivity;
@@ -161,8 +159,6 @@ public class ScreenFragment extends Fragment {
 
             }
         });
-
-
     }
 
     private void saveScreen(final Observer<Screen> callback) {
@@ -184,11 +180,11 @@ public class ScreenFragment extends Fragment {
                 screen.utree = new Select().from(Utree.class).where(Utree._ID + " = ?", treeId).executeSingle();
                 screen.screenType = adapter.getItem(spinner.getSelectedItemPosition()).getName();
                 screen.details = ScreenDetailsFactory.create(screen);
-                controller.save(screen, callback);
-                if(parentId != -1) {
-                    Screen parentScreen = Screen.getScreenById(parentId);
-                    saveScreenRelation(parentScreen, screen, relationCondition);
-                }
+                controller.save(screen, parentId, relationCondition, callback);
+//                if(parentId != -1) {
+//                    Screen parentScreen = Screen.getScreenById(parentId);
+//                    saveScreenRelation(parentScreen, screen, relationCondition);
+//                }
             }
         });
     }

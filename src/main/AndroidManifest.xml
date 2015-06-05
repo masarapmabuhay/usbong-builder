@@ -117,7 +117,7 @@
             android:label="@string/title_activity_screen_child" >
         </activity>
         <activity
-            android:name=".activities.CreateDecisionActivity"
+            android:name=".activities.DecisionActivity"
             android:label="@string/title_activity_create_decision" >
         </activity>
     </application>
