@@ -289,7 +289,6 @@ public class ScreenDetailController implements Controller {
                 final String[] selectionArgs = new String[] {
                         split[1]
                 };
-
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
         }

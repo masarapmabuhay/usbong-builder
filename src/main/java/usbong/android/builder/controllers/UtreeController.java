@@ -14,6 +14,7 @@ import usbong.android.builder.models.Utree;
 
 /**
  * Created by Rocky Camacho on 6/26/2014.
+ * Edited by Michael Syson and Cere Blanco, 1 June 2015
  */
 public class UtreeController implements Controller {
 
@@ -49,13 +50,13 @@ public class UtreeController implements Controller {
         Observable.create(new Observable.OnSubscribe<Utree>() {
             @Override
             public void call(Subscriber<? super Utree> subscriber) {
-                if(utree.name.equalsIgnoreCase("")){
-                    subscriber.onError(new FormInputException("Please provide a valid .utree name."));
-                }else {
-                    utree.save();
-                }
-                subscriber.onNext(utree);
-                subscriber.onCompleted();
+            	if(utree.name.equalsIgnoreCase("")){
+            		subscriber.onError(new FormInputException("Please provide a valid .utree name."));
+            	}else {
+            		utree.save();
+            	}
+            	subscriber.onNext(utree);                
+            	subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
