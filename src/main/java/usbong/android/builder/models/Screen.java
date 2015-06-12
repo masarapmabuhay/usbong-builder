@@ -34,6 +34,12 @@ public class Screen extends Model implements BaseColumns, Serializable {
     @Column(name = "IsStart")
     public int isStart = 0;
 
+    public static Screen getScreenById(long screenId) {
+        return new Select().from(Screen.class)
+                .where(Screen._ID + " = ?", screenId)
+                .executeSingle();
+    }
+
     public static List<Screen> getScreens(long treeId) {
         return new Select().from(Screen.class)
                 .where("Utree = ?", treeId)

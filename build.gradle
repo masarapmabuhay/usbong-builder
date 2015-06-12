@@ -43,17 +43,17 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 6
-        versionName "June 2, 2015"
+        versionCode 7
+        versionName "June 12, 2015"
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
     }
 
     signingConfigs {
         myConfig {
-            storeFile file("D:\\someplace")
-            storePassword "something"
-            keyAlias "something"
-            keyPassword "something"
+            storeFile file("D:\\Usbong\\Keystore\\keystore")
+            storePassword "keystoremikesyson022888"
+            keyAlias "usbong"
+            keyPassword "usbongmikesyson022888"
         }
     }
 

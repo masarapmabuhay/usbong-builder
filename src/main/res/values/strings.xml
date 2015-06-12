@@ -21,6 +21,8 @@
     <string name="add_screen">Add new screen</string>
     <string name="add_tree">Add new .utree</string>
     <string name="title_activity_screen">ScreenActivity</string>
+    <string name="title_activity_screen_child">ScreenChild</string>
+    <string name="title_activity_create_decision">Usbong Builder</string>
     <string name="screen_saved">Screen saved</string>
     <string name="new_screen">New Screen</string>
     <string name="edit_screen">Edit Screen</string>
@@ -35,6 +37,9 @@
     <string name="select_an_image">Select an image</string>
     <string name="please_install_file_manager">Please install a file manager.</string>
     <string name="select_a_video">Select a video</string>
+    <string name="screen_parent_label">Screen parent : </string>
+    <string name="screen_parent_title"> NONE </string>
+    <string name="tree_parent">NONE</string>
 
     <array name="decisions">
         <item>Yes</item>
