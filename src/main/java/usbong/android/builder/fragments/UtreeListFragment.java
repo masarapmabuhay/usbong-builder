@@ -284,11 +284,11 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
                 }
             });
 
-            Intent intent = new Intent();
-            intent.setAction(android.content.Intent.ACTION_VIEW);
-            File file = new File("/sdcard/mytextfile.txt");
-            intent.setDataAndType(Uri.fromFile(file), "text/*");
-            startActivity(intent);
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra("UTREE_KEY", selectedUtree.name);
+            sendIntent.setType("application/utree");
+            startActivity(Intent.createChooser(sendIntent, "Open Tree in..."));
 
         } else {
             try {
