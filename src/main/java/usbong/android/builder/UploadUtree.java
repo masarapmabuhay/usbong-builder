@@ -33,6 +33,7 @@ public class UploadUtree extends AsyncTask<String, Integer, String> {
     private Context c;
     private ProgressDialog d;
     private PowerManager.WakeLock mWakeLock;
+    private String uploader, description;
 
     public UploadUtree(Context c, ProgressDialog d) {
         this.c = c;
@@ -60,7 +61,8 @@ public class UploadUtree extends AsyncTask<String, Integer, String> {
         int maxBuffersize = 1024 * 1024;
 
         String path = sUrl[0];
-        String name = sUrl[1];
+        String uploader = sUrl[1];
+        String description = sUrl[2];
 //	    String path1 = sUrl[1];
         File file = new File(path);
 //	    File file1 = new File(path1);
@@ -68,7 +70,8 @@ public class UploadUtree extends AsyncTask<String, Integer, String> {
         try {
             FileInputStream fileIn = new FileInputStream(file);
 //	        FileInputStream fileIn1 = new FileInputStream(file1);
-            URL url = new URL("http://192.168.0.12/usbong/build-upload.php");
+//            URL url = new URL("http://192.168.0.12/usbong/build-upload.php");
+            URL url = new URL("http://shrimptalusan.hostei.com/usbong/build-upload.php");
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
@@ -128,9 +131,9 @@ public class UploadUtree extends AsyncTask<String, Integer, String> {
 
             //PARAMETER FIELD NAME
             dOut.writeBytes(twoHyphens + boundary + lineEnd);
-            dOut.writeBytes("Content-Disposition: form-data; name=\"JP\"" + lineEnd);
+            dOut.writeBytes("Content-Disposition: form-data; name=\"uploader\"" + lineEnd);
             dOut.writeBytes(lineEnd);
-            dOut.writeBytes(name); // mobile_no is String variable
+            dOut.writeBytes(uploader); // mobile_no is String variable
             dOut.writeBytes(lineEnd);
             //PARAMETER END
 
@@ -138,7 +141,7 @@ public class UploadUtree extends AsyncTask<String, Integer, String> {
             dOut.writeBytes(twoHyphens + boundary + lineEnd);
             dOut.writeBytes("Content-Disposition: form-data; name=\"description\"" + lineEnd);
             dOut.writeBytes(lineEnd);
-            dOut.writeBytes("This is the description"); // mobile_no is String variable
+            dOut.writeBytes(description); // mobile_no is String variable
             dOut.writeBytes(lineEnd);
             //PARAMETER END
 

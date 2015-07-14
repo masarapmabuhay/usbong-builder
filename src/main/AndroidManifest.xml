@@ -37,6 +37,10 @@
                 android:parentActivityName="usbong.android.builder.activities.MainActivity"
                 android:screenOrientation="portrait">
         </activity>
+        <activity android:name="usbong.android.builder.activities.UtreeDetailsActivity"
+                  android:parentActivityName="usbong.android.builder.activities.MainActivity"
+                  android:screenOrientation="portrait">
+        </activity>
         <activity
                 android:name="usbong.android.builder.activities.ScreenListActivity"
                 android:parentActivityName="usbong.android.builder.activities.MainActivity"
