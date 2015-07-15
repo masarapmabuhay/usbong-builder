@@ -14,6 +14,16 @@
           android:icon="@android:drawable/ic_menu_upload"
           android:orderInCategory="100"
           app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_open"
+          android:title="Open"
+          android:icon="@android:drawable/ic_menu_share"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_upload"
+          android:title="Upload"
+          android:icon="@android:drawable/ic_menu_save"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom"/>
     <!--Edited by Cere -->
     <item android:id="@+id/action_rename"
           android:title="Rename"
