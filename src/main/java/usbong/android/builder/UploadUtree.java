@@ -187,6 +187,8 @@ public class UploadUtree extends AsyncTask<UtreeDetails, Integer, String> {
             publishProgress(100);
             dOut.flush();
             dOut.close();
+            if (mDialog != null)
+                mDialog.dismiss();
         } catch (MalformedURLException e) {
             return e.toString();
         } catch (Exception e) {
@@ -203,7 +205,6 @@ public class UploadUtree extends AsyncTask<UtreeDetails, Integer, String> {
             mDialog.dismiss();
     }
 
-    @Override
     protected void onProgressUpdate(Integer... progress) {
         super.onProgressUpdate(progress);
         // if we get here, length is known, now set indeterminate to false

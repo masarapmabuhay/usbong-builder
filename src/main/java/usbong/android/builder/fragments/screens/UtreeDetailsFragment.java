@@ -131,7 +131,12 @@ public class UtreeDetailsFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadUtree();
+                if (uploaderET.getText().toString().matches("") || descriptionET.getText().toString().matches("")
+                        || youtubeET.getText().toString().matches("") || treeNameTV.getText().toString().matches("")) {
+                    Toast.makeText(getActivity(), "Please complete all required fields", Toast.LENGTH_SHORT).show();
+                } else {
+                    uploadUtree();
+                }
             }
         });
 
@@ -202,7 +207,6 @@ public class UtreeDetailsFragment extends Fragment {
         dialog = new ProgressDialog(getActivity());
         dialog.setMessage("Uploading: " + treeName);
         dialog.setTitle("Saving trees...");
-        dialog.setIndeterminate(true);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
