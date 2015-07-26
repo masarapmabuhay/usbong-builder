@@ -75,8 +75,8 @@ public class UploadUtree extends AsyncTask<UtreeDetails, Integer, String> {
         try {
             FileInputStream utreeFileIn = new FileInputStream(utreeFile);
             FileInputStream screebshotFileIn = new FileInputStream(screenshotFile);
-            URL url = new URL("http://192.168.0.12/usbong/build-upload.php");
-//            URL url = new URL("http://shrimptalusan.hostei.com/usbong/build-upload.php");
+//            URL url = new URL("http://192.168.0.12/usbong/build-upload.php");
+            URL url = new URL("http://shrimptalusan.hostei.com/usbong/build-upload.php");
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoInput(true);
