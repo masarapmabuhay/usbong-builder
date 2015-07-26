@@ -182,8 +182,11 @@ public class UtreeListController implements Controller {
             public void call(Subscriber<? super String> subscriber) {
                 String folderLocation = "/storage/emulated/legacy/usbong/usbong_trees/temp/";
                 File file = new File(folderLocation);
-                if (!file.exists())
+                if (!file.exists()) {
                     file.mkdir();
+                } else {
+                    FileUtils.delete(folderLocation);
+                }
                 Screen startScreen = new Select().from(Screen.class)
                         .where("Utree = ? AND IsStart = ?", utree.getId(), 1)
                         .executeSingle();
