@@ -13,4 +13,10 @@
           android:icon="@android:drawable/ic_menu_upload"
           android:orderInCategory="100"
           app:showAsAction="ifRoom"/>
+      <item
+          android:id="@+id/action_upload"
+          android:title="Upload"
+          android:icon="@android:drawable/ic_menu_save"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom" />
 </menu>

@@ -15,11 +15,7 @@ import butterknife.OnItemClick;
 import com.activeandroid.query.Select;
 import rx.Observer;
 import usbong.android.builder.R;
-import usbong.android.builder.activities.DecisionActivity;
-import usbong.android.builder.activities.ScreenActivity;
-import usbong.android.builder.activities.ScreenDetailActivity;
-import usbong.android.builder.activities.SelectDecisionActivity;
-import usbong.android.builder.activities.SelectScreenActivity;
+import usbong.android.builder.activities.*;
 import usbong.android.builder.adapters.ScreenAdapter;
 import usbong.android.builder.controllers.ScreenListController;
 import usbong.android.builder.controllers.UtreeListController;
@@ -32,6 +28,7 @@ import usbong.android.builder.models.details.TextInputScreenDetails;
 import usbong.android.builder.utils.IntentUtils;
 import usbong.android.builder.utils.JsonUtils;
 import usbong.android.builder.utils.StringUtils;
+import usbong.android.builder.fragments.screens.UtreeDetailsFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -420,6 +417,10 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
         if (item.getItemId() == R.id.action_export) {
             exportTree();
         }
+        if (item.getItemId() == R.id.action_upload) {
+            uploadUtree();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -427,6 +428,14 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
         Intent intent = IntentUtils.getSelectFolderIntent(getActivity());
         startActivityForResult(intent, IntentUtils.CHOOSE_FOLDER_REQUEST_CODE);
     }
+
+    public void uploadUtree() {
+        Intent intent = new Intent(getActivity(), UtreeDetailsActivity.class);
+        intent.putExtra(UtreeDetailsFragment.EXTRA_TREE_NAME, utree.name);
+        intent.putExtra(UtreeDetailsFragment.EXTRA_TREE_ID, treeId);
+        startActivity(intent);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
