@@ -11,7 +11,7 @@
           app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_export"
           android:title="Export"
-          android:icon="@android:drawable/ic_menu_upload"
+          android:icon="@drawable/usbong_export_icon"
           android:orderInCategory="100"
           app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_open"
@@ -21,7 +21,7 @@
           app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_upload"
           android:title="Upload"
-          android:icon="@android:drawable/ic_menu_save"
+          android:icon="@android:drawable/ic_menu_upload"
           android:orderInCategory="100"
           app:showAsAction="ifRoom"/>
     <!--Edited by Cere -->

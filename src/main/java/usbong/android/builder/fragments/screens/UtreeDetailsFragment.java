@@ -23,6 +23,7 @@ import usbong.android.builder.models.Screen;
 import usbong.android.builder.models.Utree;
 import android.net.Uri;
 import usbong.android.builder.models.UtreeDetails;
+import usbong.android.builder.utils.DeviceUtils;
 import usbong.android.builder.utils.FileUtils;
 import usbong.android.builder.utils.PackageUtils;
 import usbong.android.builder.UploadUtree;
@@ -131,11 +132,15 @@ public class UtreeDetailsFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (uploaderET.getText().toString().matches("") || descriptionET.getText().toString().matches("")
-                        || youtubeET.getText().toString().matches("") || treeNameTV.getText().toString().matches("")) {
-                    Toast.makeText(getActivity(), "Please complete all required fields", Toast.LENGTH_SHORT).show();
+                if (DeviceUtils.hasNetworkConnection(getActivity())) {
+                    if (uploaderET.getText().toString().matches("") || descriptionET.getText().toString().matches("")
+                        /* || youtubeET.getText().toString().matches("")*/ || treeNameTV.getText().toString().matches("")) {
+                        Toast.makeText(getActivity(), "Please complete all required fields.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        uploadUtree();
+                    }
                 } else {
-                    uploadUtree();
+                    Toast.makeText(getActivity(), "Please connect to the Internet first.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
