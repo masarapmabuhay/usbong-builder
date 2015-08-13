@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="usbong.android.builder.fragments.ScreenListFragment">
+
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="TREE_NAME"
+            android:id="@+id/selectedUtreeName"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uploader Name"
+            android:id="@+id/textView"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/uploaderName"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:id="@+id/textView2"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/description"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Youtube Link"
+        android:id="@+id/youtubeLabel" />
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        android:id="@+id/youtubeLink1" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Screenshot"
+        android:id="@+id/IconLabel" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="6">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_weight="6"
+                android:id="@+id/iconPath"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Select Screenshot"
+                android:id="@+id/getFile" android:layout_weight="1"/>
+    </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload"
+            android:id="@+id/upload" android:layout_gravity="center_horizontal"/>
+</LinearLayout>

@@ -142,4 +142,72 @@ public class UtreeListController implements Controller {
 
     }
 
+    public void exportTreeToUsbongApp(final Utree utree, final String treeFolderLocation, final String tempFolderLocation, Observer<String> observer) {
+        System.out.println("exportAndUploadTree");
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                String folderLocation = "/storage/emulated/legacy/usbong/usbong_trees/";
+                File file = new File(folderLocation);
+                if (!file.exists())
+                    file.mkdir();
+                Screen startScreen = new Select().from(Screen.class)
+                        .where("Utree = ? AND IsStart = ?", utree.getId(), 1)
+                        .executeSingle();
+                if (startScreen == null) {
+                    subscriber.onError(new NoStartingScreenException(".utree does not have a starting screen. Please mark one of the screens as the start screen"));
+                }
+
+                FileUtils.mkdir(treeFolderLocation);
+                String xmlFileLocation = treeFolderLocation + utree.name + ".xml";
+                String zipFilePath = folderLocation + File.separator + utree.name + ".utree";
+                UtreeConverter converter = new UtreeConverter();
+                converter.convert(utree, xmlFileLocation);
+                FileUtils.delete(tempFolderLocation);
+                FileUtils.copyAll(treeFolderLocation, tempFolderLocation + utree.name + ".utree" + File.separator);
+                FileUtils.zip(zipFilePath, tempFolderLocation);
+                FileUtils.delete(tempFolderLocation);
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public void exportTreeToTempLocation(final Utree utree, final String treeFolderLocation, final String tempFolderLocation, Observer<String> observer) {
+        System.out.println("exportAndUploadTree");
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                String folderLocation = "/storage/emulated/legacy/usbong/usbong_trees/temp/";
+                File file = new File(folderLocation);
+                if (!file.exists()) {
+                    file.mkdir();
+                } else {
+                    FileUtils.delete(folderLocation);
+                }
+                Screen startScreen = new Select().from(Screen.class)
+                        .where("Utree = ? AND IsStart = ?", utree.getId(), 1)
+                        .executeSingle();
+                if (startScreen == null) {
+                    subscriber.onError(new NoStartingScreenException(".utree does not have a starting screen. Please mark one of the screens as the start screen"));
+                }
+
+                FileUtils.mkdir(treeFolderLocation);
+                String xmlFileLocation = treeFolderLocation + utree.name + ".xml";
+                String zipFilePath = folderLocation + File.separator + utree.name + ".utree";
+                UtreeConverter converter = new UtreeConverter();
+                converter.convert(utree, xmlFileLocation);
+                FileUtils.delete(tempFolderLocation);
+                FileUtils.copyAll(treeFolderLocation, tempFolderLocation + utree.name + ".utree" + File.separator);
+                FileUtils.zip(zipFilePath, tempFolderLocation);
+                FileUtils.delete(tempFolderLocation);
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
 }

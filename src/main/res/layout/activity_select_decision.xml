@@ -29,8 +29,8 @@
 
             <ImageButton android:id="@android:id/button2"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/abc_ic_search" />
+                         android:layout_height="wrap_content"/>
+            <!--android:src="@drawable/abc_ic_search" /-->
 
         </LinearLayout>
 
