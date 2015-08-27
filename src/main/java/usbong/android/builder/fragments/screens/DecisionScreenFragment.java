@@ -74,7 +74,7 @@ public class DecisionScreenFragment extends BaseScreenFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_decision, menu);
+        inflater.inflate(R.menu.decision, menu);
     }
 
     @Override

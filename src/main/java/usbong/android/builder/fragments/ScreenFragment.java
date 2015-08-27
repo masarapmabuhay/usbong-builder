@@ -23,7 +23,6 @@ import usbong.android.builder.adapters.ScreenTypeAdapter;
 import usbong.android.builder.controllers.ScreenController;
 import usbong.android.builder.enums.UsbongBuilderScreenType;
 import usbong.android.builder.models.Screen;
-import usbong.android.builder.models.ScreenRelation;
 import usbong.android.builder.models.Utree;
 import usbong.android.builder.models.details.ScreenDetailsFactory;
 
@@ -36,15 +35,11 @@ public class ScreenFragment extends Fragment {
 
     public static final String TAG = ScreenFragment.class.getSimpleName();
     public static final String EXTRA_ID = "EXTRA_ID";
-    public static final String EXTRA_PARENT_ID = "EXTRA_PARENT_ID";
-    public static final String EXTRA_RELATION_CONDITION = "EXTRA_RELATION_CONDITION";
     public static final String EXTRA_TREE_ID = "EXTRA_TREE_ID";
     private static final int NEW_SCREEN = -1;
 
     private long id = NEW_SCREEN;
-    private long parentId = -1;
     private long treeId = -1;
-    private String relationCondition = "DEFAULT";
     private ScreenController controller;
     private ScreenTypeAdapter adapter;
 
@@ -81,14 +76,11 @@ public class ScreenFragment extends Fragment {
         if (arguments != null) {
             id = arguments.getLong(EXTRA_ID, NEW_SCREEN);
             treeId = arguments.getLong(EXTRA_TREE_ID, -1);
-            parentId = arguments.getLong(EXTRA_PARENT_ID, -1);
-            relationCondition = arguments.getString(EXTRA_RELATION_CONDITION, "DEFAULT");
         }
         if (treeId == -1) {
             throw new IllegalArgumentException("tree is required");
         }
         Log.d(TAG, "tree id:  " + treeId);
-
         int titleResId = R.string.new_screen;
         if (id != NEW_SCREEN) {
             titleResId = R.string.edit_screen;
@@ -138,26 +130,6 @@ public class ScreenFragment extends Fragment {
         });
     }
 
-    private void saveScreenRelation(final Screen parentScreen, final Screen screen,  final String relationCondition){
-        controller.addOrUpdateRelation(parentScreen, screen, relationCondition, new Observer<ScreenRelation>() {
-            @Override
-            public void onCompleted() {
-                Toast.makeText(getActivity(), "Screen relation saved.", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(TAG, e.getMessage(), e);
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            @Override
-            public void onNext(ScreenRelation screenRelation) {
-
-            }
-        });
-    }
-
     private void saveScreen(final Observer<Screen> callback) {
         //TODO: improve code
         controller.fetchScreen(id, new Observer<Screen>() {
@@ -177,8 +149,7 @@ public class ScreenFragment extends Fragment {
                 screen.utree = new Select().from(Utree.class).where(Utree._ID + " = ?", treeId).executeSingle();
                 screen.screenType = adapter.getItem(spinner.getSelectedItemPosition()).getName();
                 screen.details = ScreenDetailsFactory.create(screen);
-//                controller.save(screen, callback);
-                controller.save(screen, parentId, relationCondition, callback);
+                controller.save(screen, callback);
             }
         });
     }

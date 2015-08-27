@@ -47,41 +47,42 @@ public class UtreeListController implements Controller {
     }
 
     /**
-     * Added by Cere Blanco 5/2015
-     * @param utree
-     * @param observer
-     */
+         * Added by Cere Blanco 5/2015
+         * @param utree
+         * @param observer
+         */
     public void deleteUtree(final Utree utree, final String folderLocation, Observer<Object> observer) {
-
-        Observable.create(new Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                List<Screen> uTreeScreens = Screen.getScreens(utree.getId());
-
-                for( Screen screen: uTreeScreens) {
-                    new Delete().from(ScreenRelation.class)
-                            .where("parent = ? OR child = ?", screen.getId())
+    
+            Observable.create(new Observable.OnSubscribe<Object>() {
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+                    List<Screen> uTreeScreens = Screen.getScreens(utree.getId());
+    
+                    for( Screen screen: uTreeScreens) {
+                        new Delete().from(ScreenRelation.class)
+                                .where("parent = ? OR child = ?", screen.getId())
+                                .execute();
+                        new Delete().from(Screen.class)
+                                .where(Screen._ID + " = ?", screen.getId())
+                                .execute();
+                    }
+    
+                    String treeFolder = folderLocation + File.separator + utree.name;
+                    FileUtils.delete(treeFolder);
+    
+                    new Delete().from(Utree.class)
+                            .where(Utree._ID + " = ?", utree.getId())
                             .execute();
-                    new Delete().from(Screen.class)
-                            .where(Screen._ID + " = ?", screen.getId())
-                            .execute();
+    
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
                 }
-
-                String treeFolder = folderLocation + File.separator + utree.name;
-                FileUtils.delete(treeFolder);
-
-                new Delete().from(Utree.class)
-                        .where(Utree._ID + " = ?", utree.getId())
-                        .execute();
-
-                subscriber.onNext(null);
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
     }
-
+    
+    
     public void importTree(final String fileLocation, final String outputFolderLocation, Observer<String> observer) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -89,11 +90,11 @@ public class UtreeListController implements Controller {
                 if (fileLocation.endsWith(XML_FILE_EXTENSION)) {
                     String treeName = fileLocation.substring(fileLocation.lastIndexOf("/") + 1, fileLocation.lastIndexOf(XML_FILE_EXTENSION));
                     parseTreeDetails(fileLocation, outputFolderLocation + File.separator + treeName);
-
                     subscriber.onNext(fileLocation);
                     subscriber.onCompleted();
                 } else if (fileLocation.endsWith(UTREE_FILE_EXTENSION)) {
                     String treeName = fileLocation.substring(fileLocation.lastIndexOf("/") + 1, fileLocation.lastIndexOf(UTREE_FILE_EXTENSION));
+//                    FileUtils.unzip(fileLocation, outputFolderLocation + File.separator + treeName);
                     FileUtils.unzip(fileLocation, outputFolderLocation);
                     String xmlFilePath = outputFolderLocation + File.separator + treeName + File.separator + treeName + XML_FILE_EXTENSION;
                     parseTreeDetails(xmlFilePath, outputFolderLocation + File.separator + treeName);
@@ -133,6 +134,7 @@ public class UtreeListController implements Controller {
                 FileUtils.copyAll(treeFolderLocation, tempFolderLocation + utree.name + ".utree" + File.separator);
                 FileUtils.zip(zipFilePath, tempFolderLocation);
                 FileUtils.delete(tempFolderLocation);
+                
                 subscriber.onNext(null);
                 subscriber.onCompleted();
             }
@@ -141,5 +143,4 @@ public class UtreeListController implements Controller {
                 .subscribe(observer);
 
     }
-
 }

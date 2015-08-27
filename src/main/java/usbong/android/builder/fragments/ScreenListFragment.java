@@ -15,26 +15,18 @@ import butterknife.OnItemClick;
 import com.activeandroid.query.Select;
 import rx.Observer;
 import usbong.android.builder.R;
-import usbong.android.builder.activities.DecisionActivity;
 import usbong.android.builder.activities.ScreenActivity;
 import usbong.android.builder.activities.ScreenDetailActivity;
-import usbong.android.builder.activities.SelectDecisionActivity;
-import usbong.android.builder.activities.SelectScreenActivity;
 import usbong.android.builder.adapters.ScreenAdapter;
 import usbong.android.builder.controllers.ScreenListController;
 import usbong.android.builder.controllers.UtreeListController;
-import usbong.android.builder.enums.UsbongBuilderScreenType;
 import usbong.android.builder.fragments.dialogs.DeleteConfirmationDialogFragment;
 import usbong.android.builder.models.Screen;
 import usbong.android.builder.models.Utree;
-import usbong.android.builder.models.details.ListScreenDetails;
-import usbong.android.builder.models.details.TextInputScreenDetails;
 import usbong.android.builder.utils.IntentUtils;
-import usbong.android.builder.utils.JsonUtils;
 import usbong.android.builder.utils.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,10 +41,7 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
 
     private static final String TAG = ScreenListFragment.class.getSimpleName();
     public static final String EXTRA_TREE_ID = "EXTRA_TREE_ID";
-//    public static final String EXTRA_SCREEN_ID = "EXTRA_SCREEN_ID";
-    public final String RELATION_CONDITION_DEFAULT = "DEFAULT";
-
-    protected static final int DELETE_SELECTED_CHILD_REQUEST_CODE = 301;
+    public static final String EXTRA_SCREEN_ID = "EXTRA_SCREEN_ID";
 
     /**
      * The fragment's ListView/GridView.
@@ -87,14 +76,6 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
                 case R.id.action_edit:
                     mode.finish();
                     editScreen();
-                    return true;
-                case R.id.action_add_child:
-                    mode.finish();
-                    addChildScreen();
-                    return true;
-                case R.id.action_remove_child:
-                    mode.finish();
-                    removeChildScreen();
                     return true;
                 case R.id.action_delete:
                     mode.finish();
@@ -152,94 +133,6 @@ public class ScreenListFragment extends Fragment implements Observer<List<Screen
 
             }
         });
-    }
-
-    /**
-     * Added by Cere
-     */
-    private void addChildScreen(){
-        if(UsbongBuilderScreenType.DECISION.getName().equalsIgnoreCase(selectedScreen.screenType)){
-            createDecisionConditionActivity();
-        }else if(UsbongBuilderScreenType.LIST.getName().equalsIgnoreCase(selectedScreen.screenType)){
-            createListConditionActivity();
-        }else if(UsbongBuilderScreenType.TEXT_INPUT.getName().equalsIgnoreCase(selectedScreen.screenType)){
-            createTextInputConditionActivity();
-        }else{
-            createDefaultConditionActivity();
-        }
-    }
-
-    /**
-     * Added by Cere
-     */
-    public void createDefaultConditionActivity(){
-        Intent intent = new Intent(getActivity(), ScreenActivity.class);
-        intent.putExtra(ScreenFragment.EXTRA_TREE_ID, treeId);
-        intent.putExtra(ScreenFragment.EXTRA_PARENT_ID, selectedScreen.getId().longValue());
-        intent.putExtra(ScreenFragment.EXTRA_RELATION_CONDITION, RELATION_CONDITION_DEFAULT);
-        startActivity(intent);
-    }
-
-    /**
-     * Added by Cere
-     */
-    public void createDecisionConditionActivity(){
-        Intent data = new Intent(getActivity(), DecisionActivity.class);
-        data.putExtra(DecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
-        data.putExtra(DecisionActivity.EXTRA_TREE_ID, treeId);
-        startActivity(data);
-    }
-
-    /**
-     * Added by Cere
-     */
-    public void createTextInputConditionActivity(){
-        TextInputScreenDetails textInputScreenDetails = JsonUtils.fromJson(selectedScreen.details, TextInputScreenDetails.class);
-        if(textInputScreenDetails.isHasAnswer()) {
-            Intent data = new Intent(getActivity(), SelectDecisionActivity.class);
-            ArrayList<String> decisions = new ArrayList<String>();
-            decisions.add("Correct");
-            decisions.add("Incorrect");
-            data.putStringArrayListExtra(DecisionActivity.EXTRA_POSSIBLE_DECISIONS, decisions);
-            data.putExtra(DecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId().longValue());
-            data.putExtra(DecisionActivity.EXTRA_TREE_ID, treeId);
-            data.putExtra(DecisionActivity.EXTRA_CONDITION_PREFIX, "ANSWER");
-            startActivity(data);
-        }
-        else {
-            createDefaultConditionActivity();
-        }
-    }
-
-    /**
-     * Added by Cere
-     *
-     */
-    public void createListConditionActivity(){
-        ListScreenDetails selectedListType = JsonUtils.fromJson(selectedScreen.details, ListScreenDetails.class);
-        if((ListScreenDetails.ListType.SINGLE_ANSWER.getName().equals(selectedListType.getType()) && selectedListType.isHasAnswer())
-                || ListScreenDetails.ListType.MULTIPLE_ANSWERS.getName().equals(selectedListType.getType())) {
-            Intent data = new Intent(getActivity(), DecisionActivity.class);
-            ArrayList<String> decisions = new ArrayList<String>();
-            decisions.add("Correct");
-            decisions.add("Incorrect");
-            data.putStringArrayListExtra(DecisionActivity.EXTRA_POSSIBLE_DECISIONS, decisions);
-            data.putExtra(DecisionActivity.EXTRA_SCREEN_PARENT_ID, selectedScreen.getId());
-            data.putExtra(DecisionActivity.EXTRA_TREE_ID, treeId);
-            data.putExtra(DecisionActivity.EXTRA_CONDITION_PREFIX, "ANSWER");
-            startActivity(data);
-        }
-        else {
-            createDefaultConditionActivity();
-        }
-    }
-
-    private void removeChildScreen(){
-        Intent data = new Intent(getActivity(), SelectScreenActivity.class);
-        data.putExtra(SelectScreenFragment.EXTRA_SCREEN_ID, selectedScreen.getId());
-        data.putExtra(SelectScreenFragment.EXTRA_TREE_ID, treeId);
-        data.putExtra(SelectScreenFragment.EXTRA_IS_FOR_DELETE_CHILD, true);
-        startActivityForResult(data, DELETE_SELECTED_CHILD_REQUEST_CODE);
     }
 
     /**
