@@ -16,28 +16,28 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--Usbong Builder (beta)--\nver: June. 2, 2015"/>
+                android:text="--Usbong Builder (beta)--\nver: 20151127"/>
 
         <TextView
                 android:id="@+id/background"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="&#34;Usbong&#34; helps people build apps. We provide training and workshops on Android Development, Software Engineering, and Social Entrepreneurship. We also offer software development services. Our flagship open source product is also called, &#34;Usbong&#34;."/>
+                android:text="Usbong's mission is to defeat poverty by uplifting human lives. Our vision is a community where there is lasting peace. We provide training and workshops on Android Development, Software Engineering, and Social Entrepreneurship. We also offer software development services. Our flagship open source product is also called, &#34;Usbong&#34;. Together with its companion app, Usbong Builder, even non-technical people can build their own Android apps."/>
 
         <TextView
                 android:id="@+id/people"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Usbong Social Systems, Inc.\n--Core Developers--\nMichael B. Syson\nCere Blanco\n\nAcknowledgment:\nRocky Camacho\nJaime Bernardo Lopez\n"/>
+                android:text="Usbong Social Systems, Inc.\n--Core Developers--\nMichael B. Syson\nCere Blanco\n\nAcknowledgment:\nRocky Camacho\nJaime Bernardo Lopez\nRanel Mafe\n"/>
 
         <TextView
                 android:id="@+id/contact"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Contact:\nWebsite: www.usbong.ph\nMailing List: usbong-users@googlegroups.com\nEmail: usbong.ph@gmail.com\n"/>
+                android:text="Contact:\nWebsite: www.usbong.ph\nMailing List: usbong-users@googlegroups.com\nEmail: support@usbong.ph\n"/>
 
         <TextView
                 android:id="@+id/copyright"

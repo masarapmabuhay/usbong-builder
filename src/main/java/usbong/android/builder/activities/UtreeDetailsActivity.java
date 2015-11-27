@@ -6,6 +6,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import usbong.android.builder.R;
 import usbong.android.builder.fragments.UtreeFragment;
+import usbong.android.builder.fragments.screens.UtreeDetailsFragment;
 
 public class UtreeDetailsActivity extends BaseActivity {
 
@@ -13,11 +14,10 @@ public class UtreeDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, UtreeFragment.newInstance(getIntent().getExtras()))
+                .replace(R.id.container, UtreeDetailsFragment.newInstance(getIntent().getExtras()))
                 .commit();
     }
 

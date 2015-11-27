@@ -1,7 +1,9 @@
 package usbong.android.builder.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -15,16 +17,20 @@ import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
 import rx.Observer;
 import usbong.android.builder.R;
+import usbong.android.builder.UploadUtree;
 import usbong.android.builder.activities.AboutUsbongActivity;
 import usbong.android.builder.activities.ScreenListActivity;
 import usbong.android.builder.activities.UtreeActivity;
+import usbong.android.builder.activities.UtreeDetailsActivity;
 import usbong.android.builder.adapters.UtreeAdapter;
 import usbong.android.builder.controllers.UtreeListController;
 import usbong.android.builder.events.OnNeedRefreshTrees;
 import usbong.android.builder.exceptions.NoStartingScreenException;
 import usbong.android.builder.fragments.dialogs.DeleteConfirmationDialogFragment;
+import usbong.android.builder.fragments.screens.UtreeDetailsFragment;
 import usbong.android.builder.models.Utree;
 import usbong.android.builder.utils.IntentUtils;
+import usbong.android.builder.utils.PackageUtils;
 import usbong.android.builder.utils.StringUtils;
 
 import java.io.File;
@@ -40,6 +46,7 @@ import java.util.List;
  */
 public class UtreeListFragment extends Fragment implements Observer<List<Utree>> {
 
+    private ProgressDialog dialog;
     public static final String TAG = UtreeListFragment.class.getSimpleName();
 
     /**
@@ -92,6 +99,14 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
                 case R.id.action_delete:
                     mode.finish();
                     showDeleteConfirmationDialog();
+                    return true;
+                case R.id.action_upload:
+                    mode.finish();
+                    uploadUtree();
+                    return true;
+                case R.id.action_open:
+                    mode.finish();
+                    openUtree();
                     return true;
             }
             return false;
@@ -183,6 +198,59 @@ public class UtreeListFragment extends Fragment implements Observer<List<Utree>>
         Intent intent = new Intent(getActivity(), ScreenListActivity.class);
         intent.putExtra(ScreenListFragment.EXTRA_TREE_ID, selectedUtree.getId().longValue());
         startActivity(intent);
+        selectedUtree = null;
+    }
+
+    public void uploadUtree() {
+        Intent intent = new Intent(getActivity(), UtreeDetailsActivity.class);
+        intent.putExtra(UtreeDetailsFragment.EXTRA_TREE_NAME, selectedUtree.name);
+        intent.putExtra(UtreeDetailsFragment.EXTRA_TREE_ID, selectedUtree.getId().longValue());
+        startActivity(intent);
+        selectedUtree = null;
+    }
+
+    public void openUtree() {
+        if (PackageUtils.isPackageInstalled("usbong.android", getActivity())) {
+                //Uploads the zipped .utree to Usbong/Usbong_trees directory
+                String treeFolderLocation = getActivity().getFilesDir() + File.separator + "trees" + File.separator + selectedUtree.name + File.separator;
+                String tempFolderLocation = getActivity().getFilesDir() + File.separator + "temp" + File.separator;
+                controller.exportTreeToTempLocation(selectedUtree, treeFolderLocation, tempFolderLocation, new Observer<String>() {
+                @Override
+                public void onCompleted() {
+                    //                    Toast.makeText(getActivity(), selectedUtree + ".utree uploaded and exported", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onError(Throwable e) {
+                    if (e instanceof NoStartingScreenException) {
+                        editUtree();
+                    }
+                    Log.e(TAG, e.getMessage(), e);
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    selectedUtree = null;
+                }
+
+                @Override
+                public void onNext(String s) {
+                }
+            });
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra("UTREE_KEY", selectedUtree.name);
+            sendIntent.setType("application/utree");
+            startActivity(Intent.createChooser(sendIntent, "Open Tree in..."));
+        } else {
+            try {
+                Intent viewIntent =
+                new Intent("android.intent.action.VIEW",
+                    Uri.parse("https://play.google.com/store/apps/details?id=usbong.android"));
+                startActivity(viewIntent);
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "Unable to Connect Try Again...",
+                    Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
         selectedUtree = null;
     }
 

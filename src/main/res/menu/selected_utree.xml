@@ -11,6 +11,16 @@
           app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_export"
           android:title="Export"
+          android:icon="@drawable/usbong_export_icon"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_open"
+          android:title="Open"
+          android:icon="@android:drawable/ic_menu_share"
+          android:orderInCategory="100"
+          app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_upload"
+          android:title="Upload"
           android:icon="@android:drawable/ic_menu_upload"
           android:orderInCategory="100"
           app:showAsAction="ifRoom"/>

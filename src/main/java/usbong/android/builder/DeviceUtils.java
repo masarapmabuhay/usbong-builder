@@ -1,52 +1,27 @@
-package usbong.android.builder;
+package usbong.android.builder.utils;
 
-import android.annotation.TargetApi;
-import android.app.Application;
-import android.os.Build;
-import android.os.StrictMode;
-import com.activeandroid.ActiveAndroid;
-//import com.crashlytics.android.Crashlytics;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 /**
- * Created by Rocky Camacho on 6/26/2014.
+ * Created by talusan on 8/9/2015.
  */
-public class DeviceUtils extends Application {
+public class DeviceUtils {
+    public static boolean hasNetworkConnection(Context context) {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
-    private static final boolean DEVELOPER_MODE = true;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        ActiveAndroid.initialize(this);
-        ActiveAndroid.setLoggingEnabled(true);
-
-//        Crashlytics.start(this);
-
-        if (DEVELOPER_MODE) {
-            //enableStrictMode();
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
+        return haveConnectedWifi || haveConnectedMobile;
     }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void enableStrictMode() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()   // or .detectAll() for all detectable problems
-                .penaltyLog()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
-    }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        ActiveAndroid.dispose();
-    }
-
 }

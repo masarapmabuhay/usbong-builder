@@ -13,7 +13,8 @@ public class UtreeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, UtreeFragment.newInstance(getIntent().getExtras()))

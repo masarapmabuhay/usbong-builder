@@ -1,52 +1,20 @@
-package usbong.android.builder;
+package usbong.android.builder.utils;
 
-import android.annotation.TargetApi;
-import android.app.Application;
-import android.os.Build;
-import android.os.StrictMode;
-import com.activeandroid.ActiveAndroid;
-//import com.crashlytics.android.Crashlytics;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
- * Created by Rocky Camacho on 6/26/2014.
+ * Created by talusan on 7/13/2015.
  */
-public class PackageUtils extends Application {
-
-    private static final boolean DEVELOPER_MODE = true;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        ActiveAndroid.initialize(this);
-        ActiveAndroid.setLoggingEnabled(true);
-
-//        Crashlytics.start(this);
-
-        if (DEVELOPER_MODE) {
-            //enableStrictMode();
+public class PackageUtils {
+    public static boolean isPackageInstalled(String packagename, Context context) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (NameNotFoundException e) {
+            return false;
         }
     }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void enableStrictMode() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()   // or .detectAll() for all detectable problems
-                .penaltyLog()
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
-    }
-
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        ActiveAndroid.dispose();
-    }
-
 }
